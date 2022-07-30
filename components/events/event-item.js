@@ -6,7 +6,7 @@ import classes from './event-item.module.css';
 import Image from 'next/image';
 
 function EventItem(props) {
-  const { title, image, date, location, id } = props;
+  const { title, image, date, location, id, priority } = props;
 
   const humanReadableDate = new Date(date).toLocaleDateString('en-US', {
     day: 'numeric',
@@ -23,9 +23,10 @@ function EventItem(props) {
         alt={title}
         width={250}
         height={160}
-        priority={true}
+        priority={priority}
       />
-      {/* priority preloads the image and remove lazyload, its good for largest contentful paint */}
+      {/* priority preloads the image and remove lazyload, its good for largest contentful paint.
+      Should be used only when the images are above the fold (initially visible) */}
       <div className={classes.content}>
         <div className={classes.summary}>
           <h2>{title}</h2>
