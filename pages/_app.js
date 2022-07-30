@@ -6,6 +6,8 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
+        {/* This will be merged with all other Head elements. And when we have
+        duplicated elements (that are in conflict, e.g. two titles), only the last one will remain. */}
         <title>Next.js Events</title>
         <meta name="description" content="Next.js Events" />
         <meta
