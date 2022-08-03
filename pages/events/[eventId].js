@@ -8,6 +8,7 @@ import ErrorAlert from '../../components/ui/error-alert';
 import Head from 'next/head';
 
 function EventDetailPage(props) {
+  const { comments, eventId } = props;
   const event = props.selectedEvent;
 
   if (!event) {
@@ -34,7 +35,7 @@ function EventDetailPage(props) {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
-      <Comments eventId={event.id} />
+      <Comments eventId={eventId} comments={comments} />
     </Fragment>
   );
 }
@@ -47,9 +48,19 @@ export async function getStaticProps(context) {
     return { notFound: true };
   }
 
+  // fetch comments from api
+  let comments;
+  await fetch(`${process.env.SERVER}/api/comments/${eventId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      comments = data.comments;
+    });
+
   return {
     props: {
       selectedEvent: event,
+      comments,
+      eventId,
     },
     revalidate: 30,
   };
