@@ -21,6 +21,7 @@ async function handler(req, res) {
   if (req.method === 'GET') {
     const data = await collection
       .find({ 'comment.eventId': req.query.eventId })
+      .sort({ _id: -1 })
       .toArray();
     res.status(200).json({ comments: data });
   }

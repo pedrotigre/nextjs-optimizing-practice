@@ -4,19 +4,24 @@ import CommentList from './comment-list';
 import NewComment from './new-comment';
 import classes from './comments.module.css';
 
+import LoadingIcon from '../icons/loading-svg';
+
 function Comments(props) {
   const { eventId } = props;
 
   const [showComments, setShowComments] = useState(false);
   const [formMessage, setFormMessage] = useState();
   const [comments, setComments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (showComments) {
+      setIsLoading(true);
       fetch(`/api/comments/${eventId}`)
         .then((response) => response.json())
         .then((data) => {
           setComments(data.comments);
+          setIsLoading(false);
         });
     }
   }, [showComments]);
@@ -52,7 +57,11 @@ function Comments(props) {
           <strong>{formMessage}</strong>
         </p>
       )}
-      {showComments && <CommentList comments={comments} />}
+      {isLoading ? (
+        <LoadingIcon />
+      ) : (
+        showComments && <CommentList comments={comments} />
+      )}
     </section>
   );
 }
