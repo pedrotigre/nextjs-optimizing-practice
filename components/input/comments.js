@@ -13,6 +13,7 @@ function Comments(props) {
   const [formMessage, setFormMessage] = useState();
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (showComments) {
@@ -20,8 +21,12 @@ function Comments(props) {
       fetch(`/api/comments/${eventId}`)
         .then((response) => response.json())
         .then((data) => {
-          setComments(data.comments);
           setIsLoading(false);
+          if (data.error) {
+            setError(true);
+            return setComments([]);
+          }
+          setComments(data.comments);
         });
     }
   }, [showComments]);
@@ -55,6 +60,11 @@ function Comments(props) {
       )) || (
         <p>
           <strong>{formMessage}</strong>
+        </p>
+      )}
+      {error && (
+        <p>
+          <strong>Something went wrong!</strong>
         </p>
       )}
       {isLoading ? (
