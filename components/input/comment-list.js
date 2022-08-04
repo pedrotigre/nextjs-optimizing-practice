@@ -1,7 +1,6 @@
 import classes from './comment-list.module.css';
 
 function CommentList(props) {
-  console.log(props.comments);
   return (
     <ul className={classes.comments}>
       {props.comments.map((item, index) => {
