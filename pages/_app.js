@@ -1,6 +1,7 @@
 import Layout from '../components/layout/layout';
 import Head from 'next/head';
 import '../styles/globals.css';
+import { NotificationProvider } from '../components/context/NotificationContext';
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -15,9 +16,11 @@ function MyApp({ Component, pageProps }) {
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <NotificationProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </NotificationProvider>
     </>
   );
 }
