@@ -1,7 +1,9 @@
 import classes from './newsletter-registration.module.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
+import NotificationContext from '../context/NotificationContext';
 
 function NewsletterRegistration() {
+  const { dispatch } = useContext(NotificationContext);
   const emailRef = useRef();
   const [newsletterStatus, setNewsletterStatus] = useState();
   function registrationHandler(event) {
@@ -15,7 +17,24 @@ function NewsletterRegistration() {
       body: JSON.stringify(emailValue),
     })
       .then((response) => response.json())
-      .then((data) => setNewsletterStatus(data.message));
+      .then((data) => {
+        setNewsletterStatus(data.message);
+        if (data.message === 'Invalid email address!') {
+          dispatch({
+            type: 'error',
+            payload: {
+              message: data.message,
+            },
+          });
+        } else {
+          dispatch({
+            type: 'success',
+            payload: {
+              message: data.message,
+            },
+          });
+        }
+      });
   }
 
   return (

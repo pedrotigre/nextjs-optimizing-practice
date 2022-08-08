@@ -1,19 +1,24 @@
 import { useReducer, createContext } from 'react';
-import classes from '../ui/notification.module.css';
+
 const NotificationContext = createContext();
 
 const initialState = {
-  status: '',
+  title: null,
+  message: null,
+  status: null,
 };
 
 const reducer = (state, action) => {
-  switch (action.type) {
+  const { type, payload } = action;
+  switch (type) {
     case 'success':
-      return classes.success;
+      return { status: 'success', title: 'Success', ...payload };
     case 'error':
-      return classes.error;
+      return { status: 'error', title: 'Error', ...payload };
     case 'pending':
-      return classes.pending;
+      return { status: 'pending', title: 'Pending', ...payload };
+    case 'hide':
+      return initialState;
     default:
       return state;
   }
@@ -21,10 +26,13 @@ const reducer = (state, action) => {
 
 export function NotificationProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const hideNotification = () => {
+    dispatch({
+      type: 'hide',
+    });
+  };
   return (
-    <NotificationContext.Provider
-      value={{ state, dispatch, notificationStyle: classes.notification }}
-    >
+    <NotificationContext.Provider value={{ state, dispatch, hideNotification }}>
       {children}
     </NotificationContext.Provider>
   );
