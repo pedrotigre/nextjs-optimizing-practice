@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import CommentList from './comment-list';
 import NewComment from './new-comment';
 import classes from './comments.module.css';
+import NotificationContext from '../context/NotificationContext';
 
 import LoadingIcon from '../icons/loading-svg';
 
 function Comments(props) {
   const { eventId } = props;
+  const { dispatch } = useContext(NotificationContext);
 
   const [showComments, setShowComments] = useState(false);
   const [formMessage, setFormMessage] = useState();
@@ -36,6 +38,12 @@ function Comments(props) {
   }
 
   function addCommentHandler(commentData) {
+    dispatch({
+      type: 'pending',
+      payload: {
+        message: 'Status pending',
+      },
+    });
     fetch(`/api/comments/${eventId}`, {
       method: 'POST',
       headers: {
@@ -43,10 +51,26 @@ function Comments(props) {
       },
       body: JSON.stringify(commentData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.message);
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         setShowComments(false);
         setFormMessage(data.message);
+        dispatch({
+          type: 'success',
+          payload: {
+            message: data.message,
+          },
+        });
+      })
+      .catch((error) => {
+        dispatch({ type: 'error', payload: { message: error.message } });
       });
   }
 

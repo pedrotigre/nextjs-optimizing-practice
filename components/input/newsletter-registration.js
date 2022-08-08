@@ -16,24 +16,30 @@ function NewsletterRegistration() {
       },
       body: JSON.stringify(emailValue),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        return response.json().then((data) => {
+          throw new Error(data.message || 'Something went wrong!!');
+        });
+      })
       .then((data) => {
         setNewsletterStatus(data.message);
-        if (data.message === 'Invalid email address!') {
-          dispatch({
-            type: 'error',
-            payload: {
-              message: data.message,
-            },
-          });
-        } else {
-          dispatch({
-            type: 'success',
-            payload: {
-              message: data.message,
-            },
-          });
-        }
+        dispatch({
+          type: 'success',
+          payload: {
+            message: data.message,
+          },
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: 'error',
+          payload: {
+            message: error.message,
+          },
+        });
       });
   }
 
