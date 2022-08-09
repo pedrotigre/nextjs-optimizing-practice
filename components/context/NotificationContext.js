@@ -1,4 +1,4 @@
-import { useReducer, createContext } from 'react';
+import { useReducer, useEffect, createContext } from 'react';
 
 const NotificationContext = createContext();
 
@@ -26,11 +26,21 @@ const reducer = (state, action) => {
 
 export function NotificationProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (state.status === 'success' || state.status === 'error') {
+      setTimeout(() => {
+        hideNotification();
+      }, 3000);
+    }
+  }, [state]);
+
   const hideNotification = () => {
     dispatch({
       type: 'hide',
     });
   };
+
   return (
     <NotificationContext.Provider value={{ state, dispatch, hideNotification }}>
       {children}
